@@ -1,4 +1,10 @@
 
+export interface CodeFile {
+  name: string;
+  language: string;
+  code: string;
+}
+
 export interface Tutorial {
   id: string;
   title: string;
@@ -8,7 +14,34 @@ export interface Tutorial {
   image: string;
   difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
   duration: string;
-  content?: string;
+  
+  subtitle?: string;
+  
+  intro: {
+    title?: string;
+    content: string;
+  };
+  
+  setup?: {
+    title?: string;
+    description: string;
+    command?: string;
+  };
+  
+  implementation: {
+    title?: string;
+    description: string;
+    principles: string[];
+    files: CodeFile[];
+  };
+  
+  conclusion: {
+    title?: string;
+    content: string;
+    author?: string;
+  };
+  
+  relatedTutorialIds?: string[];
 }
 
 export interface SidebarItem {
