@@ -19,6 +19,7 @@ export const SIDEBAR_STRUCTURE: SidebarItem[] = [
     title: 'Scroll',
     items: [
       { name: 'Background Image Parallax', id: 'bg-parallax' },
+      { name: 'Impile Card Scrolling Animation', id: 'impile-card-scroll' },
     ]
   },
   {
@@ -44,8 +45,10 @@ export const MOCK_TUTORIALS: Tutorial[] = [
       content: "A website animation featuring a mask section transition, made with Framer Motion and React inside a modern setup. This effect adds a nice layer of depth to your pages without sacrificing performance."
     },
     setup: {
-      description: "Let's start the project by creating a Next.js application. We can do that by running:",
-      command: "npx create-next-app@latest client"
+      items: [
+        { type: 'text', content: "Let's start the project by creating a Next.js application. We can do that by running:" },
+        { type: 'command', content: "npx create-next-app@latest client" }
+      ]
     },
     implementation: {
         description: "The logic is built on these key principles:",
@@ -93,8 +96,10 @@ export default function MaskSection() {
       content: "A website animation featuring an image distortion in a curved, using the sin function, React Three Fiber and Framer Motion."
     },
     setup: {
-      description: "Let's start by installing the necessary dependencies:",
-      command: "npm install three @react-three/fiber @react-three/drei framer-motion"
+      items: [
+        { type: 'text', content: "Let's start by installing the necessary dependencies:" },
+        { type: 'command', content: "npm install three @react-three/fiber @react-three/drei framer-motion" }
+      ]
     },
     implementation: {
         description: "The logic is built on these key principles:",
@@ -141,8 +146,10 @@ function DistortionMesh() {
       content: "A website animation featuring a background image moving on scroll in a parallax motion, inspired by luxury brand aesthetics."
     },
     setup: {
-      description: "We will use Framer Motion for the parallax effect.",
-      command: "npm install framer-motion"
+      items: [
+        { type: 'text', content: "We will use Framer Motion for the parallax effect." },
+        { type: 'command', content: "npm install framer-motion" }
+      ]
     },
     implementation: {
         description: "The logic is built on these key principles:",
@@ -184,8 +191,10 @@ export default function ParallaxImage() {
       content: "Learn how to create a fluid organic cursor animation using HTML Canvas and basic physics."
     },
     setup: {
-      description: "No external libraries needed, just React.",
-      command: "npx create-next-app@latest cursor-app"
+      items: [
+        { type: 'text', content: "No external libraries needed, just React." },
+        { type: 'command', content: "npx create-next-app@latest cursor-app" }
+      ]
     },
     implementation: {
         description: "The logic is built on these key principles:",
@@ -210,6 +219,118 @@ export default function FluidCursor() {
     },
     conclusion: {
         content: "Canvas opens up endless possibilities for high-performance visual effects.",
+        author: "Alberto"
+    }
+  },
+  {
+    id: 'impile-card-scroll',
+    title: 'Impile Card Scrolling Animation',
+    description: 'How to make a Impile Card Scrolling Animation using tailwindcss and React.',
+    date: 'January 9, 2026',
+    category: 'SCROLL',
+    image: '/image.png',
+    difficulty: 'Intermediate',
+    duration: 'Medium',
+    intro: {
+      content: "In this tutorial, we'll learn how to create an engaging stacking card scroll animation using React, Tailwind CSS, and Framer Motion."
+    },
+    setup: {
+      items: [
+        { type: 'text', content: "To set up a new Next.js project, you can use the following command:" },
+        { type: 'command', content: "npx create-next-app@latest" },
+        { type: 'text', content: "After that, install the required dependencies:" },
+        { type: 'command', content: "npm install framer-motion" },
+        { type: 'text', content: "Now you are ready to start" }
+      ]
+    },
+    implementation: {
+        description: "Start creating a new component called `Card.tsx` inside the `components` folder. The logic is built on these key principles:",
+        principles: ["Sticky positioning for stacking effect", "Scroll progress mapping to scale", "Dynamic z-index handling"],
+        files: [
+             {
+                name: "components/Card.tsx",
+                language: "tsx",
+                code: `"use client";
+
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
+
+export default function Card({
+  src,
+  bg,
+  i = 0,
+}: {
+  src: string;
+  bg: string;
+  i?: number;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start center", "center"],
+  });
+
+  const scale = useTransform(
+    scrollYProgress,
+    [0, 1],
+    [0.85, 1]
+  );
+
+  const y = useTransform(scrollYProgress, [0, 1], [0, i * 60]);
+
+  // const opacity = useTransform(scrollYProgress, [0, 0.3], [0, 1]);
+
+  return (
+    <motion.div
+      ref={ref}
+      style={{
+        scale,
+        // opacity,
+        y,
+        zIndex: 10 + i,
+        position: "sticky",
+        top: 0,
+      }}
+      className={\`w-full min-h-screen flex items-center justify-center \${bg}\`}
+    >
+      <h1 className="text-white font-bold text-[12rem]">{src}</h1>
+    </motion.div>
+  );
+}`
+             },
+             {
+                name: "app/page.tsx",
+                language: "tsx",
+                code: `"use client";
+
+import Card from "@/components/Card";
+
+export default function Home() {
+  return (
+    <main className="w-full bg-white dark:bg-black">
+      <section className="h-screen" />
+
+      {/* STACK SECTION */}
+      <section className="relative h-[300vh] w-full flex flex-col items-center">
+        {[0,1,2].map((i) => (
+          <Card
+            key={i}
+            src={i.toString()}
+            i={i}
+            bg={i % 2 === 0 ? "bg-purple-600" : "bg-pink-600"}
+          />
+        ))}
+      </section>
+      <section className="relative z-20 h-screen bg-transparent" />
+    </main>
+  );
+}`
+             }
+        ]
+    },
+    conclusion: {
+        content: "That's it for this animation! A super clean animation that adds a nice dimensionality to your UI. But be careful, it's not optimized for mobile yet!",
         author: "Alberto"
     }
   }

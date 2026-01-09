@@ -24,8 +24,10 @@ export interface Tutorial {
   
   setup?: {
     title?: string;
-    description: string;
-    command?: string;
+    items: {
+      type: 'text' | 'command';
+      content: string;
+    }[];
   };
   
   implementation: {

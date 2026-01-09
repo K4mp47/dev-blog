@@ -40,7 +40,7 @@ const CodeBlock: React.FC<{
   return (
     <div className="bg-[#0d0d0d] rounded-xl mb-8 shadow-2xl border border-white/5 overflow-hidden group">
       <div className="flex items-center justify-between px-4 md:px-6 py-3 border-b border-white/5 bg-[#141414]">
-        <span className="text-[11px] text-gray-400 font-mono font-medium">
+        <span className="text-[11px] text-gray-500 font-mono font-medium">
           {fileName}
         </span>
         <button
@@ -144,7 +144,7 @@ const TableOfContents = ({
       transition={{ duration: 0.3 }}
       className="hidden 2xl:block fixed right-10 top-32 w-64 z-50 pointer-events-auto"
     >
-      <h4 className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-6 border-l-2 border-indigo-500/20 pl-4">
+      <h4 className="text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-6 border-l-2 border-indigo-500/20 pl-4">
         Table of Contents
       </h4>
       <ul className="space-y-4 border-l-2 border-gray-100 dark:border-white/5">
@@ -249,7 +249,7 @@ const ArticleView: React.FC<ArticleViewProps> = ({ tutorial, onBack }) => {
           <h1 className="text-3xl md:text-[52px] font-bold text-[#0a0a0a] mb-3 md:mb-4 tracking-tight leading-[1.05]">
             {tutorial.title}
           </h1>
-          <p className="text-[15px] md:text-[17px] text-gray-600 dark:text-gray-400 leading-relaxed mb-6 md:mb-8">
+          <p className="text-[15px] md:text-[17px] text-gray-600 dark:text-gray-500 leading-relaxed mb-6 md:mb-8">
             {tutorial.subtitle || `How to make a ${tutorial.title} using Framer Motion and React`}
           </p>
         </header>
@@ -265,7 +265,7 @@ const ArticleView: React.FC<ArticleViewProps> = ({ tutorial, onBack }) => {
           <h2 className="text-2xl md:text-[28px] font-bold mb-4 md:mb-6 text-gray-900">
             {tutorial.intro.title || "Introduction"}
           </h2>
-          <p className="text-gray-600 dark:text-gray-400 leading-[1.7] text-[15px] md:text-[16px] mb-6">
+          <p className="text-gray-800 dark:text-gray-500 leading-[1.7] text-[15px] md:text-[16px] mb-6">
             {tutorial.intro.content}
           </p>
         </section>
@@ -275,13 +275,22 @@ const ArticleView: React.FC<ArticleViewProps> = ({ tutorial, onBack }) => {
             <h2 className="text-2xl md:text-[28px] font-bold mb-4 md:mb-6 text-gray-900">
               {tutorial.setup.title || "Creating the Project"}
             </h2>
-            <p className="text-gray-600 dark:text-gray-400 mb-6 md:mb-8 leading-[1.7] text-[15px] md:text-[16px]">
-              {tutorial.setup.description}
-            </p>
-            {tutorial.setup.command && (
-              <div className="p-4 rounded-lg bg-[#0d0d0d] font-mono text-[11px] md:text-[13px] text-gray-600 dark:text-gray-300 mb-8 md:mb-10 border border-gray-200 dark:border-white/5 overflow-x-auto">
-                {tutorial.setup.command}
-              </div>
+            {tutorial.setup.items.map((item, index) =>
+              item.type === "text" ? (
+                <p
+                  key={index}
+                  className="text-gray-700 dark:text-gray-500 mb-6 md:mb-8 leading-[1.7] text-[15px] md:text-[16px]"
+                >
+                  {item.content}
+                </p>
+              ) : (
+                <div
+                  key={index}
+                  className="p-4 rounded-lg bg-[#0d0d0d] font-mono text-[11px] md:text-[13px] text-gray-600 dark:text-gray-300 mb-8 md:mb-10 border border-gray-200 dark:border-white/5 overflow-x-auto"
+                >
+                  {item.content}
+                </div>
+              )
             )}
           </section>
         )}
@@ -290,7 +299,7 @@ const ArticleView: React.FC<ArticleViewProps> = ({ tutorial, onBack }) => {
           <h2 className="text-2xl md:text-[28px] font-bold mb-4 md:mb-6 text-gray-900">
             {tutorial.implementation.title || "Implementation Logic"}
           </h2>
-          <p className="text-gray-600 dark:text-gray-400 mb-6 md:mb-8 leading-[1.7] text-[15px] md:text-[16px]">
+          <p className="text-gray-600 dark:text-gray-500 mb-6 md:mb-8 leading-[1.7] text-[15px] md:text-[16px]">
             {tutorial.implementation.description}
           </p>
 
@@ -316,7 +325,7 @@ const ArticleView: React.FC<ArticleViewProps> = ({ tutorial, onBack }) => {
                       />
                     </svg>
                   </span>
-                  <span className="text-gray-600 dark:text-gray-400 font-normal">
+                  <span className="text-gray-600 dark:text-gray-500 font-normal">
                     {item}
                   </span>
                 </li>
@@ -340,10 +349,10 @@ const ArticleView: React.FC<ArticleViewProps> = ({ tutorial, onBack }) => {
           <h2 className="text-2xl md:text-[28px] font-bold mb-4 md:mb-6 text-gray-900">
              {tutorial.conclusion.title || "Wrapping Up"}
           </h2>
-          <p className="text-gray-600 dark:text-gray-400 leading-[1.7] text-[15px] md:text-[16px] mb-8 md:mb-12">
+          <p className="text-gray-600 dark:text-gray-500 leading-[1.7] text-[15px] md:text-[16px] mb-8 md:mb-12">
             {tutorial.conclusion.content}
           </p>
-          <div className="text-gray-400 font-medium">— {tutorial.conclusion.author || "Oli"}</div>
+          <div className="text-gray-500 font-medium">— {tutorial.conclusion.author || "Oli"}</div>
         </section>
 
         <footer className="border-t border-gray-100 dark:border-white/5 pt-12 md:pt-20">
@@ -365,7 +374,7 @@ const ArticleView: React.FC<ArticleViewProps> = ({ tutorial, onBack }) => {
                 </div>
                 <div>
                   <div className="flex items-center gap-2 mb-2">
-                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                    <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">
                       {t.date}
                     </span>
                     <span className="w-1 h-1 rounded-full bg-gray-300" />
