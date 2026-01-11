@@ -16,25 +16,63 @@ interface ArticleViewProps {
   onBack: () => void;
 }
 
+
 const CodeBlock: React.FC<{
   fileName: string;
   code: string;
   language?: string;
-}> = ({
-  fileName,
-  code,
-  language = "javascript",
-}) => {
+}> = ({ fileName, code, language = "javascript" }) => {
   const [copied, setCopied] = useState(false);
+  const codeRef = useRef(null);
 
   useEffect(() => {
     Prism.highlightAll();
   }, [code]);
 
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(code);
+  const copyToClipboard = async () => {
+    const textToCopy = code?.trim() || "";
+
+    // 1. Try the modern Clipboard API (requires HTTPS/Secure Context)
+    if (navigator.clipboard && window.isSecureContext) {
+      try {
+        await navigator.clipboard.writeText(textToCopy);
+        handleCopySuccess();
+        return;
+      } catch (err) {
+        console.warn("Clipboard API failed, switching to fallback...", err);
+      }
+    }
+
+    // 2. Fallback: Create a temporary text area for older browsers or non-secure contexts
+    try {
+      const textArea = document.createElement("textarea");
+      textArea.value = textToCopy;
+      
+      // Ensure the element is part of the DOM but invisible
+      textArea.style.position = "fixed";
+      textArea.style.left = "-9999px";
+      textArea.style.top = "0";
+      document.body.appendChild(textArea);
+      
+      textArea.focus();
+      textArea.select();
+      
+      const successful = document.execCommand('copy');
+      document.body.removeChild(textArea);
+      
+      if (successful) {
+        handleCopySuccess();
+      } else {
+        console.error("Fallback copy failed.");
+      }
+    } catch (err) {
+      console.error("Failed to copy text:", err);
+    }
+  };
+
+  const handleCopySuccess = () => {
     setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    setTimeout(() => setCopied(false), 4000);
   };
 
   return (
@@ -45,13 +83,24 @@ const CodeBlock: React.FC<{
         </span>
         <button
           onClick={copyToClipboard}
-          className="text-[10px] font-bold tracking-widest uppercase text-gray-500 hover:text-white transition-colors flex items-center gap-2"
+          className="text-[10px] font-bold tracking-widest uppercase text-gray-500 hover:text-white transition-colors flex items-center gap-2 cursor-pointer"
         >
-          {copied
-            ? (
-              "Copied!"
-            )
-            : (
+          {copied ? (
+            <svg
+              className="w-4 h-4 text-green-500"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+          ) : (
+            <>
               <svg
                 className="w-4 h-4"
                 fill="none"
@@ -65,7 +114,8 @@ const CodeBlock: React.FC<{
                   d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"
                 />
               </svg>
-            )}
+            </>
+          )}
         </button>
       </div>
       <div className="p-4 md:p-6 overflow-x-auto flex bg-[#0d0d0d]">
@@ -81,7 +131,9 @@ const CodeBlock: React.FC<{
         </div>
         <div className="pl-4 overflow-hidden w-full">
           <pre className={`language-${language}`}>
-            <code className={`language-${language}`}>{code.trim()}</code>
+            <code ref={codeRef} className={`language-${language}`}>
+              {code.trim()}
+            </code>
           </pre>
         </div>
       </div>
@@ -250,8 +302,35 @@ const ArticleView: React.FC<ArticleViewProps> = ({ tutorial, onBack }) => {
             {tutorial.title}
           </h1>
           <p className="text-[15px] md:text-[17px] text-gray-600 dark:text-gray-500 leading-relaxed mb-6 md:mb-8">
-            {tutorial.subtitle || `How to make a ${tutorial.title} using Framer Motion and React`}
+            {tutorial.description || `How to make a ${tutorial.title} using Framer Motion and React`}
           </p>
+          <motion.a
+            href={tutorial.link}
+            className="px-4 py-2 rounded-xl text-sm font-medium hover:bg-indigo-500/10 bg-transparent text-indigo-400 inline-flex items-center gap-1"
+            initial="rest"
+            whileHover="hover"
+            animate="rest"
+          >
+            View Source 
+            <motion.svg
+              className="w-4 h-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              style={{ rotateZ: -45 }}
+              variants={{
+                rest: { opacity: 1, x: -1, y: 1 },
+                hover: { opacity: 1, x: 1, y: -1 },
+              }}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M14 5l7 7m0 0l-7 7m7-7H3"
+              />
+            </motion.svg>
+          </motion.a>
         </header>
 
         <section id="intro" className="mb-12 md:mb-20 scroll-mt-24">
@@ -354,7 +433,8 @@ const ArticleView: React.FC<ArticleViewProps> = ({ tutorial, onBack }) => {
           </p>
           <div className="text-gray-500 font-medium">— {tutorial.conclusion.author || "Oli"}</div>
         </section>
-
+        
+        { relatedTutorials.length > 0 && (
         <footer className="border-t border-gray-100 dark:border-white/5 pt-12 md:pt-20">
           <h3 className="text-[18px] md:text-[22px] font-bold mb-8 md:mb-10 text-gray-900">
             Related Animations
@@ -391,6 +471,7 @@ const ArticleView: React.FC<ArticleViewProps> = ({ tutorial, onBack }) => {
             ))}
           </div>
         </footer>
+        )}
       </motion.div>
     </div>
   );

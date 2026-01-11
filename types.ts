@@ -9,6 +9,7 @@ export interface Tutorial {
   id: string;
   title: string;
   description: string;
+  link: string;
   date: string;
   category: string;
   image: string;

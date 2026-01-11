@@ -12,7 +12,7 @@ const TutorialCard: React.FC<TutorialCardProps> = ({ tutorial, onClick }) => {
     <motion.div
       onClick={() => onClick(tutorial.id)}
       className="group cursor-pointer space-y-4"
-      whileHover={{ y: +5 }}
+      whileHover={{ y: -5 }}
     >
       <div className="aspect-[16/9] overflow-hidden rounded-2xl bg-gray-100 relative">
         <motion.img
@@ -25,7 +25,7 @@ const TutorialCard: React.FC<TutorialCardProps> = ({ tutorial, onClick }) => {
 
       <div className="space-y-3">
         <div className="flex items-center gap-3">
-          <span className="text-[10px] text-gray-400 font-bold tracking-widest">
+          <span className="text-[10px] text-gray-500 font-bold tracking-widest">
             {tutorial.date.toUpperCase()}
           </span>
           <span className="px-2 py-0.5 rounded bg-gray-100 dark:bg-white/5 text-[10px] text-gray-500 dark:text-gray-400 font-bold tracking-widest uppercase">
@@ -33,11 +33,11 @@ const TutorialCard: React.FC<TutorialCardProps> = ({ tutorial, onClick }) => {
           </span>
         </div>
 
-        <h3 className="text-xl font-bold text-gray-900 dark:text-white group-hover:text-indigo-500 transition-colors leading-tight">
+        <h3 className="text-xl font-bold text-gray-900 group-hover:text-indigo-500 transition-colors leading-tight">
           {tutorial.title}
         </h3>
 
-        <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed line-clamp-2">
+        <p className="text-sm text-gray-500 dark:text-gray-500 leading-relaxed line-clamp-2">
           {tutorial.description}
         </p>
       </div>

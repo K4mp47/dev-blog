@@ -7,225 +7,28 @@ export const SIDEBAR_STRUCTURE: SidebarItem[] = [
     items: [
       { name: 'Introduction', id: 'intro' },
       { name: 'Gallery', id: 'gallery' },
-      { name: 'Web Animation Course', id: 'course' },
     ]
   },
-  // {
-  //   title: 'Article',
-  //   items: [
-  //   ]
-  // },
   {
     title: 'Scroll',
     items: [
-      { name: 'Background Image Parallax', id: 'bg-parallax' },
-      { name: 'Impile Card Scrolling Animation', id: 'impile-card-scroll' },
+      { name: 'Stack Card Scrolling Animation', id: 'stack-card-scroll' },
     ]
   },
   {
-    title: 'Mouse',
+    title: '3D',
     items: [
-      { name: 'Mouse Image Distortion', id: 'mouse-distortion' },
-      { name: 'Fluid Cursor Animation', id: 'fluid-cursor', locked: true },
+      { name: '3D Cube Ascii Animation', id: '3d-cube-ascii' },
     ]
-  }
+  },
 ];
 
 export const MOCK_TUTORIALS: Tutorial[] = [
   {
-    id: 'mask-section',
-    title: 'Mask Section Transition',
-    description: 'A website tutorial featuring a scroll animation using an SVG Mask to create a section transition, made with React and Framer Motion.',
-    date: 'June 2, 2024',
-    category: 'SCROLL',
-    image: 'https://picsum.photos/seed/mask/800/450',
-    difficulty: 'Intermediate',
-    duration: 'Short',
-    intro: {
-      content: "A website animation featuring a mask section transition, made with Framer Motion and React inside a modern setup. This effect adds a nice layer of depth to your pages without sacrificing performance."
-    },
-    setup: {
-      items: [
-        { type: 'text', content: "Let's start the project by creating a Next.js application. We can do that by running:" },
-        { type: 'command', content: "npx create-next-app@latest client" }
-      ]
-    },
-    implementation: {
-        description: "The logic is built on these key principles:",
-        principles: ["Define scroll bounds", "Map scroll progress to animations", "Optimize with CSS properties"],
-        files: [
-             {
-                name: "components/Mask.jsx",
-                language: "jsx",
-                code: `import { motion } from 'framer-motion';
-import { useState } from 'react';
-
-export default function MaskSection() {
-  const [isHovered, setIsHovered] = useState(false);
-
-  return (
-    <motion.div 
-      className="relative w-full h-screen overflow-hidden"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      <div className="mask-container">
-        {/* Content goes here */}
-      </div>
-    </motion.div>
-  )
-}`
-             }
-        ]
-    },
-    conclusion: {
-        content: "That's it for this animation! A super clean animation that adds a nice dimensionality to your UI.",
-        author: "Alberto"
-    }
-  },
-  {
-    id: 'mouse-distortion',
-    title: 'Mouse Image Distortion',
-    description: 'A website animation featuring an image distortion in a curved, using the sin function, React Three Fiber and Framer Motion.',
-    date: 'June 2, 2024',
-    category: 'MOUSE',
-    image: 'https://picsum.photos/seed/distort/800/450',
-    difficulty: 'Advanced',
-    duration: 'Medium',
-    intro: {
-      content: "A website animation featuring an image distortion in a curved, using the sin function, React Three Fiber and Framer Motion."
-    },
-    setup: {
-      items: [
-        { type: 'text', content: "Let's start by installing the necessary dependencies:" },
-        { type: 'command', content: "npm install three @react-three/fiber @react-three/drei framer-motion" }
-      ]
-    },
-    implementation: {
-        description: "The logic is built on these key principles:",
-        principles: ["Create a shader material", "Pass mouse coordinates as uniforms", "Animate vertex positions based on distance"],
-        files: [
-             {
-                name: "components/Distortion.jsx",
-                language: "jsx",
-                code: `import React, { useRef } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
-
-function DistortionMesh() {
-  const mesh = useRef();
-  
-  useFrame((state) => {
-    // Animation logic
-  });
-  
-  return (
-    <mesh ref={mesh}>
-      <planeGeometry args={[1, 1, 32, 32]} />
-      <shaderMaterial />
-    </mesh>
-  );
-}`
-             }
-        ]
-    },
-    conclusion: {
-        content: "This technique can be extended to create liquid-like effects and other organic interactions.",
-        author: "Alberto"
-    }
-  },
-  {
-    id: 'bg-parallax',
-    title: 'Background Image Parallax',
-    description: 'A website animation featuring a background image moving on scroll in a parallax motion, inspired by luxury brand aesthetics.',
-    date: 'May 25, 2024',
-    category: 'SCROLL',
-    image: 'https://picsum.photos/seed/parallax/800/450',
-    difficulty: 'Beginner',
-    duration: 'Short',
-    intro: {
-      content: "A website animation featuring a background image moving on scroll in a parallax motion, inspired by luxury brand aesthetics."
-    },
-    setup: {
-      items: [
-        { type: 'text', content: "We will use Framer Motion for the parallax effect." },
-        { type: 'command', content: "npm install framer-motion" }
-      ]
-    },
-    implementation: {
-        description: "The logic is built on these key principles:",
-        principles: ["Track scroll position", "Transform Y position of image", "Use overflow hidden on container"],
-        files: [
-             {
-                name: "components/Parallax.jsx",
-                language: "jsx",
-                code: `import { useScroll, useTransform, motion } from 'framer-motion';
-
-export default function ParallaxImage() {
-  const { scrollYProgress } = useScroll();
-  const y = useTransform(scrollYProgress, [0, 1], [0, -50]);
-  
-  return (
-    <div className="overflow-hidden h-96">
-      <motion.img style={{ y }} src="/bg.jpg" />
-    </div>
-  )
-}`
-             }
-        ]
-    },
-    conclusion: {
-        content: "Parallax is a classic effect that adds instant polish when done subtely.",
-        author: "Alberto"
-    }
-  },
-  {
-    id: 'fluid-cursor',
-    title: 'Fluid Cursor Animation',
-    description: 'Learn how to create a fluid organic cursor animation using HTML Canvas and basic physics.',
-    date: 'July 10, 2024',
-    category: 'MOUSE',
-    image: 'https://picsum.photos/seed/cursor/800/450',
-    difficulty: 'Advanced',
-    duration: 'Long',
-    intro: {
-      content: "Learn how to create a fluid organic cursor animation using HTML Canvas and basic physics."
-    },
-    setup: {
-      items: [
-        { type: 'text', content: "No external libraries needed, just React." },
-        { type: 'command', content: "npx create-next-app@latest cursor-app" }
-      ]
-    },
-    implementation: {
-        description: "The logic is built on these key principles:",
-        principles: ["Canvas API for drawing", "Physics simulation for movement", "RequestAnimationFrame for smooth loop"],
-        files: [
-             {
-                name: "components/FluidCursor.jsx",
-                language: "jsx",
-                code: `import React, { useEffect, useRef } from 'react';
-
-export default function FluidCursor() {
-  const canvasRef = useRef(null);
-
-  useEffect(() => {
-    // Canvas setup and animation loop
-  }, []);
-
-  return <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none" />;
-}`
-             }
-        ]
-    },
-    conclusion: {
-        content: "Canvas opens up endless possibilities for high-performance visual effects.",
-        author: "Alberto"
-    }
-  },
-  {
-    id: 'impile-card-scroll',
-    title: 'Impile Card Scrolling Animation',
-    description: 'How to make a Impile Card Scrolling Animation using tailwindcss and React.',
+    id: 'stack-card-scroll',
+    title: 'Stack Card Scrolling Animation',
+    description: 'How to make a Stack Card Scrolling Animation using Tailwind CSS, Framer Motion.',
+    link: 'https://github.com/K4mp47/stack-card',
     date: 'January 9, 2026',
     category: 'SCROLL',
     image: '/image.png',
@@ -332,6 +135,169 @@ export default function Home() {
     conclusion: {
         content: "That's it for this animation! A super clean animation that adds a nice dimensionality to your UI. But be careful, it's not optimized for mobile yet!",
         author: "Alberto"
+    },
+    relatedTutorialIds: []
+  },
+  {
+    id: '3d-cube-ascii',
+    title: '3D ASCII Cube Animation',
+    description: 'How to make a 3D ASCII Cube Animation using Tailwind CSS and React.',
+    link: 'https://github.com/K4mp47/cube-app',
+    date: 'January 11, 2026',
+    category: '3D',
+    image: '/cube.png',
+    difficulty: 'Advanced',
+    duration: 'Long',
+    intro: {
+      content: "This project demonstrates how to render a 3D rotating cube using ASCII characters in a React component. It uses 3D rotation matrices and a Z-buffer algorithm to project 3D coordinates onto a 2D screen, all rendered within a preformatted text block."
+    },
+    setup: {
+      items: [
+        { type: 'text', content: "To set up a new Next.js project, you can use the following command:" },
+        { type: 'command', content: "npx create-next-app@latest" },
+        { type: 'text', content: "This project uses Tailwind CSS for styling, which is included by default with the latest `create-next-app`." },
+        { type: 'text', content: "Now you are ready to start." }
+      ]
+    },
+     implementation: {
+        description: "Start creating a new component called `AsciiCube.tsx` inside the `components` folder. The code below shows the implementation of the cube generation logic, including the calculation of rotation matrices and surface rendering.",
+        principles: ["3D Rotation Matrices", "Z-Buffer Algorithm", "ASCII Rendering"],
+        files: [
+             {
+                name: "components/AsciiCube.tsx",
+                language: "tsx",
+                code: `"use client";
+import React, { useEffect, useRef, useState } from "react";
+
+/**
+ * A true 3D ASCII cube generator.
+ * Renders into a 2D string buffer using rotation matrices.
+ */
+const AsciiCube: React.FC = () => {
+  const [frame, setFrame] = useState("");
+  const A = useRef(0); // Rotation X
+  const B = useRef(0); // Rotation Y
+  const C = useRef(0); // Rotation Z
+
+  const width = 60;
+  const height = 60;
+  const cubeSize = 20;
+  const backgroundASCIICode = " ";
+
+  const zBuffer = useRef<number[]>(new Array(width * height).fill(0));
+  const buffer = useRef<string[]>(
+    new Array(width * height).fill(backgroundASCIICode),
+  );
+
+  // Rotation Matrix Calculations
+  const calculateX = (i: number, j: number, k: number, A: number, B: number, C: number) => {
+    return (
+      j * Math.sin(A) * Math.sin(B) * Math.cos(C) -
+      k * Math.cos(A) * Math.sin(B) * Math.cos(C) +
+      j * Math.cos(A) * Math.sin(C) +
+      k * Math.sin(A) * Math.sin(C) +
+      i * Math.cos(B) * Math.cos(C)
+    );
+  };
+
+  const calculateY = (i: number, j: number, k: number, A: number, B: number, C: number) => {
+    return (
+      j * Math.cos(A) * Math.cos(C) +
+      k * Math.sin(A) * Math.cos(C) -
+      j * Math.sin(A) * Math.sin(B) * Math.sin(C) +
+      k * Math.cos(A) * Math.sin(B) * Math.sin(C) -
+      i * Math.cos(B) * Math.sin(C)
+    );
+  };
+
+  const calculateZ = (i: number, j: number, k: number, A: number, B: number) => {
+    return (
+      k * Math.cos(A) * Math.cos(B) -
+      j * Math.sin(A) * Math.cos(B) +
+      i * Math.sin(B)
+    );
+  };
+
+  const calculateForSurface = (cubeX: number, cubeY: number, cubeZ: number, ch: string) => {
+    const x = calculateX(cubeX, cubeY, cubeZ, A.current, B.current, C.current);
+    const y = calculateY(cubeX, cubeY, cubeZ, A.current, B.current, C.current);
+    const z = calculateZ(cubeX, cubeY, cubeZ, A.current, B.current) + 100;
+
+    const ooz = 1 / z;
+    const xp = Math.floor(width / 2 + 40 * ooz * x * 2);
+    const yp = Math.floor(height / 2 + 40 * ooz * y);
+
+    const idx = xp + yp * width;
+    if (idx >= 0 && idx < width * height) {
+      if (ooz > zBuffer.current[idx]) {
+        zBuffer.current[idx] = ooz;
+        buffer.current[idx] = ch;
+      }
     }
+  };
+
+  useEffect(() => {
+    const renderInterval = setInterval(() => {
+      buffer.current.fill(backgroundASCIICode);
+      zBuffer.current.fill(0);
+
+      // Render surfaces
+      for (let cubeX = -cubeSize; cubeX < cubeSize; cubeX += 0.8) {
+        for (let cubeY = -cubeSize; cubeY < cubeSize; cubeY += 0.8) {
+          calculateForSurface(cubeX, cubeY, cubeSize, "#");
+          calculateForSurface(cubeSize, cubeY, cubeX, "$");
+          calculateForSurface(-cubeSize, cubeY, -cubeX, "@");
+          calculateForSurface(-cubeX, cubeY, -cubeSize, "%");
+          calculateForSurface(cubeX, cubeSize, cubeY, "*");
+          calculateForSurface(cubeX, -cubeSize, -cubeY, "+");
+        }
+      }
+
+      let output = "";
+      for (let k = 0; k < width * height; k++) {
+        output += k % width === 0 ? "\\n" : buffer.current[k];
+      }
+      setFrame(output);
+
+      // Update rotation angles
+      A.current += 0.02;
+      B.current += 0.05;
+      C.current += 0.01;
+    }, 30);
+
+    return () => clearInterval(renderInterval);
+  }, []);
+
+  return (
+    <pre className="text-[8px] sm:text-[10px] md:text-[12px] leading-[0.8] font-mono text-white opacity-80 select-none whitespace-pre">
+      {frame}
+    </pre>
+  );
+};
+
+export default AsciiCube;`
+             },
+             {
+                name: "app/page.tsx",
+                language: "tsx",
+                code: `import AsciiCube from "@/components/AsciiCube";
+
+export default function Home() {
+  return (
+    <div className="flex flex-col h-screen w-screen bg-[#000000] text-[#d4d4d4] select-none font-mono">
+      <main className="flex w-full h-full items-center justify-center py-32 px-16 bg-white dark:bg-black sm:items-start">
+        <AsciiCube />
+      </main>
+    </div>
+  );
+}`
+             }
+        ]
+    },
+    conclusion: {
+        content: "This creates a responsive, rotating 3D cube rendered entirely with ASCII characters, styled using Tailwind CSS classes for positioning and font adjustments.",
+        author: "Alberto"
+    },
+    relatedTutorialIds: []
   }
 ];

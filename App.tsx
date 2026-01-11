@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import Layout from "./components/Layout";
-import TutorialCard from "./components/TutorialCard";
-import ArticleView from "./components/ArticleView";
+import Layout from "@/components/Layout";
+import TutorialCard from "@/components/TutorialCard";
+import ArticleView from "@/components/ArticleView";
+import Gallery from "@/components/Gallery";
 import { MOCK_TUTORIALS } from "./constants";
 import { Tutorial } from "./types";
 import { AnimatePresence, motion } from "framer-motion";
@@ -100,6 +101,15 @@ const App: React.FC = () => {
       );
     }
 
+    if (activeId === "gallery") {
+      return (
+        <Gallery
+          tutorials={MOCK_TUTORIALS}
+          onTutorialClick={handleTutorialClick}
+        />
+      );
+    }
+
     if (!selectedTutorial) {
       return (
         <div className="pt-12 px-2 md:px-0">
@@ -132,22 +142,24 @@ const App: React.FC = () => {
               >
                 Selected Work
               </h2>
-              <div className="h-px flex-1 mx-8 bg-current opacity-10" />
+              <div className="h-px flex-1 mx-8 bg-current opacity-30" />
             </div>
 
             <motion.div
               layout
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-16"
             >
-              {MOCK_TUTORIALS.map((tutorial, i) => (
+              {[
+                "3d-cube-ascii",
+              ].map((tutorial, i) => (
                 <motion.div
-                  key={tutorial.id}
+                  key={tutorial}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 * i }}
                 >
                   <TutorialCard
-                    tutorial={tutorial}
+                    tutorial={MOCK_TUTORIALS.find((t) => t.id === tutorial)!}
                     onClick={handleTutorialClick}
                   />
                 </motion.div>

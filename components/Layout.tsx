@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { SIDEBAR_STRUCTURE } from "../constants";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useScroll, useTransform } from "framer-motion";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -21,6 +21,43 @@ const Layout: React.FC<LayoutProps> = ({
   const [collapsedSections, setCollapsedSections] = useState<
     Record<string, boolean>
   >({});
+  
+  const contentRef = React.useRef<HTMLDivElement>(null);
+  const [contentHeight, setContentHeight] = useState(0);
+
+  // ResizeObserver to track content height
+  React.useEffect(() => {
+    if (!contentRef.current) return;
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        setContentHeight(entry.contentRect.height);
+      }
+    });
+    observer.observe(contentRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  const { scrollY } = useScroll();
+  const [windowHeight, setWindowHeight] = useState(0);
+
+  React.useEffect(() => {
+    setWindowHeight(window.innerHeight);
+    const handleResize = () => setWindowHeight(window.innerHeight);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const y = useTransform(scrollY, (value) => {
+    if (!contentHeight || !windowHeight) return 0;
+    // contentHeight is height of the main scrollable area (header + body)
+    // When scrollY reaches (contentHeight - windowHeight), the bottom of content matches bottom of screen
+    // As we scroll past valid content, we want sidebar to move up
+    const scrollLimit = contentHeight - windowHeight;
+    if (value > scrollLimit) {
+        return -(value - scrollLimit);
+    }
+    return 0;
+  });
 
   const toggleSection = (title: string) => {
     setCollapsedSections((prev) => ({ ...prev, [title]: !prev[title] }));
@@ -62,89 +99,93 @@ const Layout: React.FC<LayoutProps> = ({
       `}
       </style>
 
-      {/* Main content + Sidebar Wrapper (All clips the footer) */}
+      {/* Sidebar - Desktop (Outside the mask so it can be fixed properly) */}
+      <motion.aside
+        style={{ y }}
+        className={`hidden lg:flex flex-col w-72 border-r h-screen fixed top-0 left-0 transition-colors duration-300 z-40 ${
+          isDark ? "bg-[#0e0e0e] border-white/5" : "bg-white border-gray-100"
+        }`}
+      >
+        <div className="px-8 pt-10 pb-6 shrink-0">
+          <motion.div
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            className="w-10 h-10 rounded-full bg-gradient-to-tr from-orange-400 via-red-500 to-indigo-600 shadow-lg cursor-pointer"
+            onClick={() => onSelect("home")}
+          />
+        </div>
+
+        <nav className="flex-1 px-8 pb-10 overflow-y-auto sidebar-scroll space-y-8">
+          {SIDEBAR_STRUCTURE.map((section) => (
+            <div key={section.title}>
+              <button
+                onClick={() => toggleSection(section.title)}
+                className="w-full text-[11px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-4 flex items-center justify-between hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+              >
+                {section.title}
+                <motion.svg
+                  animate={{
+                    rotate: collapsedSections[section.title] ? -90 : 0,
+                  }}
+                  className="w-3 h-3 opacity-50"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={3}
+                    d="M19 9l-7 7-7-7"
+                  />
+                </motion.svg>
+              </button>
+
+              <AnimatePresence initial={false}>
+                {!collapsedSections[section.title] && (
+                  <motion.ul
+                    initial={{ height: 0, opacity: 1 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ 
+                      duration: 0.4,
+                      ease: "easeInOut"
+                    }}
+                    className="space-y-1.5 overflow-hidden"
+                  >
+                    {section.items.map((item) => (
+                      <li key={item.id}>
+                        <button
+                          onClick={() => onSelect(item.id)}
+                          className={`text-[13px] group flex items-center justify-between w-full text-left duration-200 py-1.5 px-3 rounded-lg ${
+                            activeId === item.id
+                              ? "text-indigo-600 dark:text-indigo-400 bg-indigo-50/50 dark:bg-indigo-500/10 font-medium"
+                              : isDark
+                              ? "text-gray-500 hover:text-gray-300 hover:bg-white/5"
+                              : "text-gray-500 hover:text-gray-900 hover:bg-gray-50"
+                          }`}
+                        >
+                          <span>{item.name}</span>
+                        </button>
+                      </li>
+                    ))}
+                  </motion.ul>
+                )}
+              </AnimatePresence>
+            </div>
+          ))}
+        </nav>
+      </motion.aside>
+
+      {/* Main content Wrapper (Moves over the footer) */}
       <div
-        className={`sticky-reveal-mask flex min-h-screen transition-colors duration-300 ${
+        ref={contentRef}
+        className={`sticky-reveal-mask flex flex-col min-h-screen lg:ml-72 transition-colors duration-300 ${
           isDark ? "bg-[#0a0a0a]" : "bg-[#fcfcfc]"
         }`}
       >
-        {/* Sidebar - Desktop */}
-        <aside
-          className={`hidden lg:flex flex-col w-72 border-r h-screen sticky top-0 transition-colors duration-300 z-40 ${
-            isDark ? "bg-[#0e0e0e] border-white/5" : "bg-white border-gray-100"
-          }`}
-        >
-          <div className="px-8 pt-10 pb-6 shrink-0">
-            <motion.div
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              className="w-10 h-10 rounded-full bg-gradient-to-tr from-orange-400 via-red-500 to-indigo-600 shadow-lg cursor-pointer"
-              onClick={() => onSelect("home")}
-            />
-          </div>
-
-          <nav className="flex-1 px-8 pb-10 overflow-y-auto sidebar-scroll space-y-8">
-            {SIDEBAR_STRUCTURE.map((section) => (
-              <div key={section.title}>
-                <button
-                  onClick={() => toggleSection(section.title)}
-                  className="w-full text-[11px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-4 flex items-center justify-between hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
-                >
-                  {section.title}
-                  <motion.svg
-                    animate={{
-                      rotate: collapsedSections[section.title] ? -90 : 0,
-                    }}
-                    className="w-3 h-3 opacity-50"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={3}
-                      d="M19 9l-7 7-7-7"
-                    />
-                  </motion.svg>
-                </button>
-
-                <AnimatePresence initial={false}>
-                  {!collapsedSections[section.title] && (
-                    <motion.ul
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      className="space-y-1.5 overflow-hidden"
-                    >
-                      {section.items.map((item) => (
-                        <li key={item.id}>
-                          <button
-                            onClick={() => onSelect(item.id)}
-                            className={`text-[13px] group flex items-center justify-between w-full text-left transition-all duration-200 py-1.5 px-3 rounded-lg ${
-                              activeId === item.id
-                                ? "text-indigo-600 dark:text-indigo-400 bg-indigo-50/50 dark:bg-indigo-500/10 font-medium"
-                                : isDark
-                                ? "text-gray-500 hover:text-gray-300 hover:bg-white/5"
-                                : "text-gray-500 hover:text-gray-900 hover:bg-gray-50"
-                            }`}
-                          >
-                            <span>{item.name}</span>
-                          </button>
-                        </li>
-                      ))}
-                    </motion.ul>
-                  )}
-                </AnimatePresence>
-              </div>
-            ))}
-          </nav>
-        </aside>
-
-        {/* Main Content Area */}
-        <div className="flex-1 flex flex-col relative min-h-screen">
           <header
-            className={`flex items-center justify-between lg:justify-end px-6 lg:px-12 py-6 border-b lg:border-none sticky top-0 z-30 transition-colors duration-300 shrink-0 ${
+            className={`flex items-center fixed w-full lg:-translate-x-72 justify-between lg:justify-end px-6 lg:px-12 py-6 border-b lg:border-none z-30 transition-colors duration-300 shrink-0 ${
               isDark ? "bg-[#0a0a0a] border-white/5" : "bg-white border-gray-50"
             }`}
           >
@@ -229,11 +270,10 @@ const Layout: React.FC<LayoutProps> = ({
             </div>
           </header>
 
-          <main className="pb-32 max-w-6xl w-full mx-auto flex-1">
+          <main className="pb-32 max-w-6xl w-full mx-auto flex-1 mt-20">
             {children}
           </main>
         </div>
-      </div>
 
       {/* Global Sticky Footer (Sits behind everything else) */}
       <footer
@@ -453,8 +493,7 @@ const Layout: React.FC<LayoutProps> = ({
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
-  );
+    </div>);
 };
 
 export default Layout;
