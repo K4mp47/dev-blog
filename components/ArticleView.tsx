@@ -14,6 +14,7 @@ import "https://esm.sh/prismjs@1.29.0/components/prism-css";
 interface ArticleViewProps {
   tutorial: Tutorial;
   onBack: () => void;
+  onSelectTutorial: (id: string) => void;
 }
 
 
@@ -47,19 +48,19 @@ const CodeBlock: React.FC<{
     try {
       const textArea = document.createElement("textarea");
       textArea.value = textToCopy;
-      
+
       // Ensure the element is part of the DOM but invisible
       textArea.style.position = "fixed";
       textArea.style.left = "-9999px";
       textArea.style.top = "0";
       document.body.appendChild(textArea);
-      
+
       textArea.focus();
       textArea.select();
-      
+
       const successful = document.execCommand('copy');
       document.body.removeChild(textArea);
-      
+
       if (successful) {
         handleCopySuccess();
       } else {
@@ -118,7 +119,7 @@ const CodeBlock: React.FC<{
           )}
         </button>
       </div>
-      <div className="p-4 md:p-6 overflow-x-auto flex bg-[#0d0d0d]">
+      <div id='codeSample' className="p-4 md:p-6 overflow-x-auto flex bg-[#0d0d0d]">
         <div className="pr-4 border-r border-white/5 text-right select-none">
           {code.split("\n").map((_, i) => (
             <div
@@ -204,11 +205,10 @@ const TableOfContents = ({
           <li key={section.id}>
             <button
               onClick={() => scrollTo(section.id)}
-              className={`text-[13px] text-left transition-all duration-300 pl-4 -ml-[2px] block w-full border-l-2 ${
-                activeSection === section.id
-                  ? "text-indigo-500 font-semibold border-indigo-500"
-                  : "text-gray-500 hover:text-gray-900 dark:hover:text-gray-300 border-transparent hover:border-gray-300 dark:hover:border-white/20"
-              }`}
+              className={`text-[13px] text-left transition-all duration-300 pl-4 -ml-[2px] block w-full border-l-2 ${activeSection === section.id
+                ? "text-indigo-500 font-semibold border-indigo-500"
+                : "text-gray-500 hover:text-gray-900 dark:hover:text-gray-300 border-transparent hover:border-gray-300 dark:hover:border-white/20"
+                }`}
             >
               {section.title}
             </button>
@@ -220,7 +220,7 @@ const TableOfContents = ({
   );
 };
 
-const ArticleView: React.FC<ArticleViewProps> = ({ tutorial, onBack }) => {
+const ArticleView: React.FC<ArticleViewProps> = ({ tutorial, onBack, onSelectTutorial }) => {
   const sections = [
     { id: "intro", title: tutorial.intro?.title || "Introduction" },
     ...(tutorial.setup ? [{ id: "setup", title: tutorial.setup.title || "Creating the Project" }] : []),
@@ -228,7 +228,7 @@ const ArticleView: React.FC<ArticleViewProps> = ({ tutorial, onBack }) => {
     { id: "wrapping-up", title: tutorial.conclusion?.title || "Wrapping Up" },
   ];
 
-  const relatedTutorials = tutorial.relatedTutorialIds 
+  const relatedTutorials = tutorial.relatedTutorialIds
     ? MOCK_TUTORIALS.filter(t => tutorial.relatedTutorialIds?.includes(t.id))
     : MOCK_TUTORIALS.filter(t => t.id !== tutorial.id).slice(0, 2);
 
@@ -265,7 +265,7 @@ const ArticleView: React.FC<ArticleViewProps> = ({ tutorial, onBack }) => {
           <div className="flex items-center gap-4 mb-6 md:mb-8">
             <div
               className="w-12 h-12 md:w-16 md:h-16 shrink-0 rounded-full bg-gradient-to-tr from-indigo-600 via-purple-500 to-blue-600 overflow-hidden flex items-center"
-              onClick={() => {}}
+              onClick={() => { }}
             >
               <img src="/me.jpg" alt="Alberto Campagnolo" className="scale-100" />
             </div>
@@ -306,12 +306,12 @@ const ArticleView: React.FC<ArticleViewProps> = ({ tutorial, onBack }) => {
           </p>
           <motion.a
             href={tutorial.link}
-            className="px-4 py-2 rounded-xl text-sm font-medium hover:bg-indigo-500/10 bg-transparent text-indigo-400 inline-flex items-center gap-1"
+            className="relative px-4 py-2 rounded-xl text-sm font-medium hover:bg-indigo-500/10 bg-transparent text-indigo-400 inline-flex items-center gap-1"
             initial="rest"
             whileHover="hover"
             animate="rest"
           >
-            View Source 
+            View Source
             <motion.svg
               className="w-4 h-4"
               fill="none"
@@ -334,7 +334,7 @@ const ArticleView: React.FC<ArticleViewProps> = ({ tutorial, onBack }) => {
         </header>
 
         <section id="intro" className="mb-12 md:mb-20 scroll-mt-24">
-          <div className="aspect-[16/9] rounded-2xl overflow-hidden bg-gray-100 dark:bg-white/5 mb-8 md:mb-16 border border-gray-100 dark:border-white/10 shadow-lg">
+          <div className="aspect-[16/9] rounded-2xl overflow-hidden bg-gray-100 dark:bg-white/5 mb-8 md:mb-16 shadow-lg">
             <img
               src={tutorial.image}
               className="w-full h-full object-cover"
@@ -426,51 +426,52 @@ const ArticleView: React.FC<ArticleViewProps> = ({ tutorial, onBack }) => {
 
         <section id="wrapping-up" className="mb-20 md:mb-32 scroll-mt-24">
           <h2 className="text-2xl md:text-[28px] font-bold mb-4 md:mb-6 text-gray-900">
-             {tutorial.conclusion.title || "Wrapping Up"}
+            {tutorial.conclusion.title || "Wrapping Up"}
           </h2>
           <p className="text-gray-600 dark:text-gray-500 leading-[1.7] text-[15px] md:text-[16px] mb-8 md:mb-12">
             {tutorial.conclusion.content}
           </p>
           <div className="text-gray-500 font-medium">— {tutorial.conclusion.author || "Oli"}</div>
         </section>
-        
-        { relatedTutorials.length > 0 && (
-        <footer className="border-t border-gray-100 dark:border-white/5 pt-12 md:pt-20">
-          <h3 className="text-[18px] md:text-[22px] font-bold mb-8 md:mb-10 text-gray-900">
-            Related Animations
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10 md:gap-y-16">
-            {relatedTutorials.map((t) => (
-              <div
-                key={t.id}
-                className="cursor-pointer group flex flex-col gap-4"
-              >
-                <div className="aspect-[16/10] rounded-2xl overflow-hidden bg-gray-100 dark:bg-white/5 border border-transparent dark:border-white/5 transition-all group-hover:shadow-xl">
-                  <img
-                    src={t.image}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                    alt={t.title}
-                  />
-                </div>
-                <div>
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">
-                      {t.date}
-                    </span>
-                    <span className="w-1 h-1 rounded-full bg-gray-300" />
-                    <span className="text-[10px] font-bold text-indigo-500 uppercase tracking-widest">
-                      {t.category}
-                    </span>
-                  </div>
-                  <h4 className="font-bold text-[#0a0a0a] text-[17px] group-hover:text-indigo-500 transition-colors">
-                    {t.title}
-                  </h4>
 
+        {relatedTutorials.length > 0 && (
+          <footer className="border-t border-gray-100 dark:border-white/5 pt-12 md:pt-20">
+            <h3 className="text-[18px] md:text-[22px] font-bold mb-8 md:mb-10 text-gray-900">
+              Related Animations
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10 md:gap-y-16">
+              {relatedTutorials.map((t) => (
+                <div
+                  key={t.id}
+                  className="cursor-pointer group flex flex-col gap-4"
+                  onClick={() => onSelectTutorial(t.id)}
+                >
+                  <div className="aspect-[16/10] rounded-2xl overflow-hidden bg-gray-100 dark:bg-white/5 border border-transparent dark:border-white/5 transition-all group-hover:shadow-xl">
+                    <img
+                      src={t.image}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      alt={t.title}
+                    />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">
+                        {t.date}
+                      </span>
+                      <span className="w-1 h-1 rounded-full bg-gray-300" />
+                      <span className="px-2 py-0.5 rounded bg-gray-100 dark:bg-white/5 text-[10px] text-gray-500 dark:text-gray-400 font-bold tracking-widest uppercase">
+                        {tutorial.category}
+                      </span>
+                    </div>
+                    <h4 className="font-bold text-[#0a0a0a] text-[17px] group-hover:text-indigo-500 transition-colors">
+                      {t.title}
+                    </h4>
+
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        </footer>
+              ))}
+            </div>
+          </footer>
         )}
       </motion.div>
     </div>

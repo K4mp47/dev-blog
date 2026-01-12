@@ -12,9 +12,9 @@ const TutorialCard: React.FC<TutorialCardProps> = ({ tutorial, onClick }) => {
     <motion.div
       onClick={() => onClick(tutorial.id)}
       className="group cursor-pointer space-y-4"
-      whileHover={{ y: -5 }}
+      whileHover={{ y: -4 }}
     >
-      <div className="aspect-[16/9] overflow-hidden rounded-2xl bg-gray-100 relative">
+      <div className="aspect-[16/9] overflow-hidden rounded-2xl relative">
         <motion.img
           src={tutorial.image}
           alt={tutorial.title}

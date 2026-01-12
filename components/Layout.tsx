@@ -21,7 +21,7 @@ const Layout: React.FC<LayoutProps> = ({
   const [collapsedSections, setCollapsedSections] = useState<
     Record<string, boolean>
   >({});
-  
+
   const contentRef = React.useRef<HTMLDivElement>(null);
   const [contentHeight, setContentHeight] = useState(0);
 
@@ -54,7 +54,7 @@ const Layout: React.FC<LayoutProps> = ({
     // As we scroll past valid content, we want sidebar to move up
     const scrollLimit = contentHeight - windowHeight;
     if (value > scrollLimit) {
-        return -(value - scrollLimit);
+      return -(value - scrollLimit);
     }
     return 0;
   });
@@ -65,9 +65,8 @@ const Layout: React.FC<LayoutProps> = ({
 
   return (
     <div
-      className={`transition-colors duration-300 ${
-        isDark ? "dark bg-[#0a0a0a]" : "bg-[#fcfcfc]"
-      }`}
+      className={`transition-colors duration-300 ${isDark ? "dark bg-[#0a0a0a]" : "bg-[#fcfcfc]"
+        }`}
     >
       <style>
         {`
@@ -102,9 +101,8 @@ const Layout: React.FC<LayoutProps> = ({
       {/* Sidebar - Desktop (Outside the mask so it can be fixed properly) */}
       <motion.aside
         style={{ y }}
-        className={`hidden lg:flex flex-col w-72 border-r h-screen fixed top-0 left-0 transition-colors duration-300 z-40 ${
-          isDark ? "bg-[#0e0e0e] border-white/5" : "bg-white border-gray-100"
-        }`}
+        className={`hidden lg:flex flex-col w-72 border-r h-screen fixed top-0 left-0 transition-colors duration-300 z-40 ${isDark ? "bg-[#0e0e0e] border-white/5" : "bg-white border-gray-100"
+          }`}
       >
         <div className="px-8 pt-10 pb-6 shrink-0">
           <motion.div
@@ -144,30 +142,48 @@ const Layout: React.FC<LayoutProps> = ({
               <AnimatePresence initial={false}>
                 {!collapsedSections[section.title] && (
                   <motion.ul
-                    initial={{ height: 0, opacity: 1 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ 
-                      duration: 0.4,
-                      ease: "easeInOut"
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{
+                      height: "auto",
+                      opacity: 1,
+                      transition: {
+                        height: { duration: 0.3, ease: [0.87, 0, 0.13, 1] },
+                        opacity: { duration: 0.25, delay: 0.1 }
+                      }
+                    }}
+                    exit={{
+                      height: 0,
+                      opacity: 0,
+                      transition: {
+                        height: { duration: 0.3, ease: [0.87, 0, 0.13, 1] },
+                        opacity: { duration: 0.15 }
+                      }
                     }}
                     className="space-y-1.5 overflow-hidden"
                   >
-                    {section.items.map((item) => (
-                      <li key={item.id}>
+                    {section.items.map((item, index) => (
+                      <motion.li
+                        key={item.id}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -10 }}
+                        transition={{
+                          delay: index * 0.05,
+                          duration: 0.2
+                        }}
+                      >
                         <button
                           onClick={() => onSelect(item.id)}
-                          className={`text-[13px] group flex items-center justify-between w-full text-left duration-200 py-1.5 px-3 rounded-lg ${
-                            activeId === item.id
-                              ? "text-indigo-600 dark:text-indigo-400 bg-indigo-50/50 dark:bg-indigo-500/10 font-medium"
-                              : isDark
+                          className={`text-[13px] group flex items-center justify-between w-full text-left duration-200 py-1.5 px-3 rounded-lg ${activeId === item.id
+                            ? "text-indigo-600 dark:text-indigo-400 bg-indigo-50/50 dark:bg-indigo-500/10 font-medium"
+                            : isDark
                               ? "text-gray-500 hover:text-gray-300 hover:bg-white/5"
                               : "text-gray-500 hover:text-gray-900 hover:bg-gray-50"
-                          }`}
+                            }`}
                         >
                           <span>{item.name}</span>
                         </button>
-                      </li>
+                      </motion.li>
                     ))}
                   </motion.ul>
                 )}
@@ -180,134 +196,125 @@ const Layout: React.FC<LayoutProps> = ({
       {/* Main content Wrapper (Moves over the footer) */}
       <div
         ref={contentRef}
-        className={`sticky-reveal-mask flex flex-col min-h-screen lg:ml-72 transition-colors duration-300 ${
-          isDark ? "bg-[#0a0a0a]" : "bg-[#fcfcfc]"
-        }`}
+        className={`sticky-reveal-mask flex flex-col min-h-screen lg:ml-72 transition-colors duration-300 ${isDark ? "bg-[#0a0a0a]" : "bg-[#fcfcfc]"
+          }`}
       >
-          <header
-            className={`flex items-center fixed w-full lg:-translate-x-72 justify-between lg:justify-end px-6 lg:px-12 py-6 border-b lg:border-none z-30 transition-colors duration-300 shrink-0 ${
-              isDark ? "bg-[#0a0a0a] border-white/5" : "bg-white border-gray-50"
+        <header
+          className={`flex items-center fixed w-full lg:-translate-x-72 justify-between lg:justify-end px-6 lg:px-12 py-6 border-b lg:border-none z-30 transition-colors duration-300 shrink-0 ${isDark ? "bg-[#0a0a0a] border-white/5" : "bg-white border-gray-50"
             }`}
-          >
-            <div
-              className="lg:hidden w-8 h-8 rounded-full bg-gradient-to-tr from-orange-400 via-red-500 to-indigo-600"
-              onClick={() => onSelect("home")}
-            />
+        >
+          <div
+            className="lg:hidden w-8 h-8 rounded-full bg-gradient-to-tr from-orange-400 via-red-500 to-indigo-600"
+            onClick={() => onSelect("home")}
+          />
 
-            <div className="flex items-center gap-6">
-              <button
-                onClick={() => onSelect("about")}
-                className={`text-xs font-bold uppercase tracking-widest transition-colors ${
-                  isDark
-                    ? "text-gray-400 hover:text-white"
-                    : "text-gray-500 hover:text-gray-900"
+          <div className="flex items-center gap-6">
+            <button
+              onClick={() => onSelect("about")}
+              className={`text-xs font-bold uppercase tracking-widest transition-colors ${isDark
+                ? "text-gray-400 hover:text-white"
+                : "text-gray-500 hover:text-gray-900"
                 }`}
-              >
-                About
-              </button>
-              <button
-                onClick={onToggleTheme}
-                className={`p-2 rounded-xl border transition-all ${
-                  isDark
-                    ? "bg-white/5 border-white/10 text-white hover:bg-white/10"
-                    : "bg-white border-gray-100 text-gray-700 hover:bg-gray-50"
+            >
+              About
+            </button>
+            <button
+              onClick={onToggleTheme}
+              className={`p-2 rounded-xl border transition-all ${isDark
+                ? "bg-white/5 border-white/10 text-white hover:bg-white/10"
+                : "bg-white border-gray-100 text-gray-700 hover:bg-gray-50"
                 }`}
-              >
-                {isDark
-                  ? (
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
-                      />
-                    </svg>
-                  )
-                  : (
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
-                      />
-                    </svg>
-                  )}
-              </button>
-              <button
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className={`lg:hidden w-10 h-10 flex items-center justify-center rounded-xl border shadow-sm hover:shadow-md transition-all active:scale-95 ${
-                  isDark
-                    ? "bg-white/5 border-white/10 text-white"
-                    : "bg-white border-gray-100 text-gray-700"
+            >
+              {isDark
+                ? (
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+                    />
+                  </svg>
+                )
+                : (
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+                    />
+                  </svg>
+                )}
+            </button>
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className={`lg:hidden w-10 h-10 flex items-center justify-center rounded-xl border shadow-sm hover:shadow-md transition-all active:scale-95 ${isDark
+                ? "bg-white/5 border-white/10 text-white"
+                : "bg-white border-gray-100 text-gray-700"
                 }`}
+            >
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
               >
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 6h16M4 12h16m-7 6h7"
-                  />
-                </svg>
-              </button>
-            </div>
-          </header>
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16m-7 6h7"
+                />
+              </svg>
+            </button>
+          </div>
+        </header>
 
-          <main className="pb-32 max-w-6xl w-full mx-auto flex-1 mt-20">
-            {children}
-          </main>
-        </div>
+        <main className="pb-32 max-w-6xl w-full mx-auto flex-1 mt-20">
+          {children}
+        </main>
+      </div>
 
       {/* Global Sticky Footer (Sits behind everything else) */}
       <footer
-        className={`md:h-[600px] sticky bottom-0 z-10 pt-8 transition-colors duration-300 flex flex-col justify-end ${
-          isDark ? "bg-[#0f0f0f]" : "bg-[#f4f4f7]"
-        }`}
+        className={`md:h-[600px] sticky bottom-0 z-10 pt-8 transition-colors duration-300 flex flex-col justify-end ${isDark ? "bg-[#0f0f0f]" : "bg-[#f4f4f7]"
+          }`}
       >
         <div className="max-w-7xl mx-auto w-full px-6 lg:px-16 pb-12">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 mb-20">
             {/* Subscription Section */}
             <div className="space-y-8 max-w-md">
               <h2
-                className={`text-3xl font-bold tracking-tight leading-[1.2] ${
-                  isDark ? "text-white" : "text-[#2d3139]"
-                }`}
+                className={`text-3xl font-bold tracking-tight leading-[1.2] ${isDark ? "text-white" : "text-[#2d3139]"
+                  }`}
               >
                 Subscribe to the newsletters to stay in touch with the latest.
               </h2>
               <div className="space-y-4">
                 <div
-                  className={`relative flex items-center rounded-2xl border p-1 transition-all focus-within:ring-2 focus-within:ring-indigo-500/20 ${
-                    isDark
-                      ? "bg-white/5 border-white/10"
-                      : "bg-[#eff3f8] border-[#e1e6ef]"
-                  }`}
+                  className={`relative flex items-center rounded-2xl border p-1 transition-all focus-within:ring-2 focus-within:ring-indigo-500/20 ${isDark
+                    ? "bg-white/5 border-white/10"
+                    : "bg-[#eff3f8] border-[#e1e6ef]"
+                    }`}
                 >
                   <input
                     type="email"
                     placeholder="example@gmail.com"
-                    className={`flex-1 bg-transparent px-5 py-3.5 text-sm font-medium outline-none ${
-                      isDark
-                        ? "placeholder-gray-600 text-white"
-                        : "placeholder-[#a1a8b3] text-[#2d3139]"
-                    }`}
+                    className={`flex-1 bg-transparent px-5 py-3.5 text-sm font-medium outline-none ${isDark
+                      ? "placeholder-gray-600 text-white"
+                      : "placeholder-[#a1a8b3] text-[#2d3139]"
+                      }`}
                   />
                   <div className="pr-1.5">
                     <div className="w-10 h-10 rounded-full bg-[#34d399]/10 flex items-center justify-center text-[#34d399] cursor-pointer hover:bg-[#34d399]/20 transition-colors">
@@ -337,9 +344,8 @@ const Layout: React.FC<LayoutProps> = ({
             <div className="flex lg:justify-end items-start gap-16 lg:gap-24">
               <div className="space-y-4">
                 <ul
-                  className={`space-y-4 text-[14px] font-semibold ${
-                    isDark ? "text-gray-400" : "text-[#4b5563]"
-                  }`}
+                  className={`space-y-4 text-[14px] font-semibold ${isDark ? "text-gray-400" : "text-[#4b5563]"
+                    }`}
                 >
                   <li
                     className="hover:text-indigo-500 cursor-pointer transition-colors"
@@ -360,20 +366,13 @@ const Layout: React.FC<LayoutProps> = ({
 
           {/* Bottom Bar */}
           <div
-            className={`flex flex-col md:flex-row justify-between items-start md:items-center gap-8 pt-8 border-t ${
-              isDark ? "border-white/10" : "border-[#6b7280]/20"
-            }`}
+            className={`flex flex-col md:flex-row justify-end items-start md:items-center gap-8 pt-8 border-t ${isDark ? "border-white/10" : "border-[#6b7280]/20"
+              }`}
           >
-            <div className={`${isDark ? "text-white/40" : "text-[#6b7280]"}`}>
-              <svg className="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z" />
-              </svg>
-            </div>
             <div className="flex flex-col md:flex-row md:items-center gap-1.5 md:gap-8">
               <div
-                className={`flex items-center gap-1.5 text-[11px] font-medium ${
-                  isDark ? "text-gray-500" : "text-[#6b7280]"
-                }`}
+                className={`flex items-center gap-1.5 text-[11px] font-medium ${isDark ? "text-gray-500" : "text-[#6b7280]"
+                  }`}
               >
                 <span>Design system inspired by</span>
                 <a
@@ -386,11 +385,10 @@ const Layout: React.FC<LayoutProps> = ({
                 </a>
               </div>
               <div
-                className={`text-[11px] font-medium ${
-                  isDark ? "text-gray-500" : "text-[#6b7280]"
-                }`}
+                className={`text-[11px] font-medium ${isDark ? "text-gray-500" : "text-[#6b7280]"
+                  }`}
               >
-                Copyright 2023 © Olivier Larose
+                Copyright 2025 © Alberto Campagnolo
               </div>
             </div>
           </div>
@@ -412,9 +410,8 @@ const Layout: React.FC<LayoutProps> = ({
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className={`w-80 h-full shadow-2xl flex flex-col p-8 ${
-                isDark ? "bg-[#111] text-white" : "bg-white text-gray-900"
-              }`}
+              className={`w-80 h-full shadow-2xl flex flex-col p-8 ${isDark ? "bg-[#111] text-white" : "bg-white text-gray-900"
+                }`}
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex justify-between items-center mb-12 shrink-0">
@@ -474,12 +471,11 @@ const Layout: React.FC<LayoutProps> = ({
                               onSelect(item.id);
                               setIsMobileMenuOpen(false);
                             }}
-                            className={`text-lg font-medium transition-colors ${
-                              activeId === item.id
-                                ? "text-indigo-500"
-                                : "hover:text-indigo-500"
-                            }`}
- 
+                            className={`text-lg font-medium transition-colors ${activeId === item.id
+                              ? "text-indigo-500"
+                              : "hover:text-indigo-500"
+                              }`}
+
                           >
                             {item.name}
                           </button>

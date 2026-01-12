@@ -53,18 +53,14 @@ const App: React.FC = () => {
           className="pt-12 max-w-3xl"
         >
           <h1 className="text-6xl font-bold mb-12 tracking-tight">About Me</h1>
-          <div
-            className={`space-y-6 text-xl leading-relaxed ${
-              isDark ? "text-gray-400" : "text-gray-600"
-            }`}
-          >
-            <p>
+          <div className="space-y-6 text-xl leading-relaxed">
+            <p className="text-gray-700 dark:text-gray-500">
               I'm a designer and developer obsessed with the intersection of
               aesthetics and motion. Inspired by the works of Olivier Larose, I
               build high-performance web animations that feel natural and
               intuitive.
             </p>
-            <p>
+            <p className="text-gray-700 dark:text-gray-500">
               This blog is my personal playground—a repository of UI patterns,
               shaders, and complex scroll interactions designed to push the
               boundaries of modern front-end development.
@@ -118,9 +114,8 @@ const App: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
-              className={`text-5xl md:text-7xl font-bold tracking-tight mb-8 max-w-4xl leading-[1.1] ${
-                isDark ? "text-white" : "text-gray-900"
-              }`}
+              className={`text-5xl md:text-7xl font-bold tracking-tight mb-8 max-w-4xl leading-[1.1] ${isDark ? "text-white" : "text-gray-900"
+                }`}
             >
               Building fluid web experiences{" "}
               <motion.span
@@ -136,9 +131,8 @@ const App: React.FC = () => {
           <section>
             <div className="flex items-center justify-between mb-12">
               <h2
-                className={`text-2xl font-bold ${
-                  isDark ? "text-white" : "text-gray-900"
-                }`}
+                className={`text-2xl font-bold ${isDark ? "text-white" : "text-gray-900"
+                  }`}
               >
                 Selected Work
               </h2>
@@ -178,6 +172,7 @@ const App: React.FC = () => {
             setSelectedTutorial(null);
             setActiveId("home");
           }}
+          onSelectTutorial={handleTutorialClick}
         />
       </div>
     );
@@ -190,7 +185,7 @@ const App: React.FC = () => {
       onToggleTheme={() => setIsDark(!isDark)}
       isDark={isDark}
     >
-      <AnimatePresence mode="wait">
+      <AnimatePresence mode="wait" onExitComplete={() => window.scrollTo(0, 0)}>
         <motion.div
           key={activeId + (selectedTutorial?.id || "")}
           initial={{ opacity: 0, y: 10 }}

@@ -44,12 +44,11 @@ const Gallery: React.FC<GalleryProps> = ({ tutorials, onTutorialClick }) => {
               id="filter-btn"
               key={category}
               onClick={() => setSelectedCategory(category)}
-              className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
-                selectedCategory === category
+              className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${selectedCategory === category
                 // text-indigo-600 dark:text-indigo-400 bg-indigo-50/50 dark:bg-indigo-500/10 font-medium
-                  ? "dark:bg-indigo-500/10 bg-indigo-50/50 !text-indigo-400"
-                  : "bg-transparent text-gray-900 hover:bg-gray-200"
-              }`}
+                ? "bg-indigo-500/10 !text-indigo-400 hover:!text-indigo-400"
+                : "bg-transparent text-gray-900 hover:bg-gray-200"
+                }`}
             >
               {category === "All" ? "All Effects" : category}
             </button>
