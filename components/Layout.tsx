@@ -471,7 +471,7 @@ const Layout: React.FC<LayoutProps> = ({
                               onSelect(item.id);
                               setIsMobileMenuOpen(false);
                             }}
-                            className={`text-lg font-medium transition-colors ${activeId === item.id
+                            className={`text-lg font-medium transition-colors text-left ${activeId === item.id
                               ? "text-indigo-500"
                               : "hover:text-indigo-500"
                               }`}

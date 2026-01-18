@@ -12,7 +12,7 @@ const App: React.FC = () => {
   const [selectedTutorial, setSelectedTutorial] = useState<Tutorial | null>(
     null,
   );
-  const [isDark, setIsDark] = useState(false);
+  const [isDark, setIsDark] = useState(true);
 
   useEffect(() => {
     if (isDark) {
@@ -145,6 +145,7 @@ const App: React.FC = () => {
             >
               {[
                 "3d-cube-ascii",
+                "iphone-spline-animation",
               ].map((tutorial, i) => (
                 <motion.div
                   key={tutorial}
