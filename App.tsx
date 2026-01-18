@@ -50,7 +50,7 @@ const App: React.FC = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="pt-12 max-w-3xl"
+          className="pt-12 max-w-3xl px-2"
         >
           <h1 className="text-6xl font-bold mb-12 tracking-tight">About Me</h1>
           <div className="space-y-6 text-xl leading-relaxed">
